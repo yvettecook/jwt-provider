@@ -5,7 +5,7 @@ import JWT
 /// like token Signers
 public final class Provider: Vapor.Provider {
     public static let repositoryName = "jwt-provider"
-    
+
     public let signer: Signer
     public init(signer: Signer) {
         self.signer = signer
@@ -35,7 +35,6 @@ public final class Provider: Vapor.Provider {
             guard let algorithm = signerConfig["algorithm"]?.string else {
                 throw ConfigError.missing(key: ["signer", "algorithm"], file: "jwt", desiredType: String.self)
             }
-
             guard let key = signerConfig["key"]?.string else {
                 throw ConfigError.missing(key: ["signer", "key"], file: "jwt", desiredType: String.self)
             }
@@ -65,7 +64,9 @@ public final class Provider: Vapor.Provider {
 
             switch algorithm {
             case "rs256":
-                signer = try RS256(key: bytes)
+                print("WORKING?")
+                signer = try RS256(pem: key)
+//                signer = try RS256(key: bytes)
             case "rs384":
                 signer = try RS384(key: bytes)
             case "rs512":
@@ -100,7 +101,7 @@ public final class Provider: Vapor.Provider {
 
         self.init(signer: signer)
     }
-    
+
     public func boot(_ config: Config) throws { }
 
     /// Called to prepare the Droplet.
